@@ -21,8 +21,8 @@ LIBBPF_PATH = $(LINUX_LIB_PATH)/bpf
 
 TARGETS += bmc
 
-CLANG ?= clang-9
-LLC ?= llc-9
+CLANG ?= clang-17
+LLC ?= llc
 CC := gcc
 
 KERN_SOURCES = ${TARGETS:=_kern.c}
@@ -34,8 +34,12 @@ LIBBPF = $(LIBBPF_PATH)/libbpf.a
 
 CFLAGS := -g -O2 -Wall
 CFLAGS += -I.
-CFLAGS += -I$(LINUX_LIB_PATH)
-CFLAGS += -I$(LINUX_TOOLS_PATH)/include/uapi
+CFLAGS += -I/usr/src/linux-6.6.0-47.0.0.52.oe2403.x86_64/include/
+CFLAGS += -I/usr/src/linux-6.6.0-47.0.0.52.oe2403.x86_64/arch/x86/include/
+CFLAGS += -I/usr/src/kernels/6.6.0-47.0.0.52.oe2403.x86_64/include/
+CFLAGS += -I/usr/src/kernels/6.6.0-47.0.0.52.oe2403.x86_64/arch/x86/include/generated/
+CFLAGS += -I/usr/src/linux-6.6.0-47.0.0.52.oe2403.x86_64/include/uapi
+CFLAGS += -I/usr/src/linux-6.6.0-47.0.0.52.oe2403.x86_64/tools/lib
 
 LDFLAGS ?= -L$(LIBBPF_PATH) -l:libbpf.a -lelf $(USER_LIBS)
 

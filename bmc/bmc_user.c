@@ -141,6 +141,8 @@ int main(int argc, char *argv[])
 	struct rlimit r = {RLIM_INFINITY, RLIM_INFINITY};
 	int map_progs_xdp_fd, xdp_main_prog_fd, map_progs_tc_fd, map_progs_fd, map_stats_fd;
 	struct bpf_object_load_attr load_attr;
+	memset(&load_attr, 0, sizeof(load_attr));
+
 	struct bpf_object *obj;
 	char filename[PATH_MAX];
 	int err, prog_count;
@@ -225,7 +227,7 @@ int main(int argc, char *argv[])
 	prog_count = sizeof(progs) / sizeof(progs[0]);
 
 	for (int i = 0; i < prog_count; i++) {
-		progs[i].prog = bpf_object__find_program_by_title(obj, progs[i].name);
+		progs[i].prog = bpf_object__find_program_by_name(obj, progs[i].name);
 		if (!progs[i].prog) {
 			fprintf(stderr, "Error: bpf_object__find_program_by_title failed\n");
 			return 1;
