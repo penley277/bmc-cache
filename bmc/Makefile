@@ -21,9 +21,9 @@ LIBBPF_PATH = $(LINUX_LIB_PATH)/bpf
 
 TARGETS += bmc
 
-CLANG ?= clang-9
-LLC ?= llc-9
-CC := gcc
+CLANG ?= clang-18
+LLC ?= llc-18
+CC := clang
 
 KERN_SOURCES = ${TARGETS:=_kern.c}
 USER_SOURCES = ${TARGETS:=_user.c}
@@ -36,10 +36,11 @@ CFLAGS := -g -O2 -Wall
 CFLAGS += -I.
 CFLAGS += -I$(LINUX_LIB_PATH)
 CFLAGS += -I$(LINUX_TOOLS_PATH)/include/uapi
+CFLAGS += -I./linux/tools/include
 
-LDFLAGS ?= -L$(LIBBPF_PATH) -l:libbpf.a -lelf $(USER_LIBS)
+LDFLAGS ?= -L$(LIBBPF_PATH) -l:libbpf.a -lelf $(USER_LIBS) -lz
 
-NOSTDINC_FLAGS := -nostdinc -isystem $(shell $(CC) -print-file-name=include)
+NOSTDINC_FLAGS := -fcf-protection -nostdinc -isystem $(shell $(CC) -print-file-name=include)
 ARCH=$(shell uname -m | sed 's/x86_64/x86/' | sed 's/i386/x86/')
 
 LINUXINCLUDE := -I$(LINUX_PATH)/arch/$(ARCH)/include
@@ -47,11 +48,15 @@ LINUXINCLUDE += -I$(LINUX_PATH)/arch/$(ARCH)/include/uapi
 LINUXINCLUDE += -I$(LINUX_PATH)/arch/$(ARCH)/include/generated
 LINUXINCLUDE += -I$(LINUX_PATH)/arch/$(ARCH)/include/generated/uapi
 LINUXINCLUDE += -I$(LINUX_PATH)/include
+LINUXINCLUDE += -I$(LINUX_PATH)/include/linux
+LINUXINCLUDE += -I$(LINUX_PATH)/tools/include/uapi/linux
+LINUXINCLUDE += -I$(LINUX_PATH)/tools/lib/bpf
 LINUXINCLUDE += -I$(LINUX_PATH)/include/uapi
 LINUXINCLUDE += -I$(LINUX_PATH)/include/generated/uapi
 LINUXINCLUDE += -I$(LINUX_PATH)/tools/testing/selftests/bpf
 LINUXINCLUDE += -include $(LINUX_PATH)/include/linux/kconfig.h
 LINUXINCLUDE += -include $(LINUX_PATH)/samples/bpf/asm_goto_workaround.h
+
 
 EXTRA_CFLAGS=-Werror
 
